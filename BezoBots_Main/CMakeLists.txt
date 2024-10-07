@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(41068_SPR2024_BezoBots)
+project(bezobots)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -14,6 +14,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(turtlebot3_navigation2 REQUIRED)
 find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
 
 include_directories(include)
@@ -30,6 +31,8 @@ ament_target_dependencies(
   sensor_msgs 
   nav_msgs 
   tf2
+  tf2_geometry_msgs
+  OpenCV
 )
 
 target_include_directories(robo_s2 PUBLIC

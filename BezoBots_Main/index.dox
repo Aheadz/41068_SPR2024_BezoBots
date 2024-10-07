@@ -1,0 +1,42 @@
+/*!
+
+*/
+
+// without this gap between two doxygen definition, the last group does not get
+// populated properly for some reason.
+
+/*!
+@mainpage 41068 Robotics Studio 1 Spring 2024 BezoBots - Warehouse Automation Project
+
+@section intro Introduction
+
+
+@section system_overview System Overview
+
+@section running Running the Program
+The program can be launched using the following ROS2 command: 
+
+@section images Simulation Images
+
+@section build Building the Documentation
+To generate this documentation:
+1. Navigate to your project directory.
+2. Run `doxygen –g` to create a Doxyfile.
+3. Adjust your Doxyfile as needed (specifically INPUT and OUTPUT directories).
+4. Run `doxygen Doxyfile` to generate the HTML and LaTeX output.
+
+@section topics ROS Topics
+
+The ROS package with nodes subscribes to the following topics:
+
+It publishes to the following topics:
+
+
+The package responds to the following service requests:
+
+
+@n By BezoBots Team
+@n mostafa.e.rahimi@student.uts.edu.au zahead.rashidi@student.uts.edu.au
+
+@date 10-October-2024
+*/
