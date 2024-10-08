@@ -72,12 +72,7 @@ def generate_launch_description():
     return LaunchDescription([
         turtlebot_launch_arg,  # Include the argument for selecting the TurtleBot3 Gazebo launch file
         joystick_launch_arg,  # Joystick argument
-        #map_yaml_arg,  # Pass the map YAML argument
         turtlebot3_gazebo_launch,
         OpaqueFunction(function=evaluate_joystick),  # Evaluate joystick configuration
         rviz_launch,  # Launch RViz first
-        # map_server_cmd,  # Delayed map server launch
-        # lifecycle_manager_cmd,  # Delayed lifecycle manager launch
-        # cartographer_launch_arg,
-        # cartographer_launch,  # Pass the cartographer launch argument
     ])
