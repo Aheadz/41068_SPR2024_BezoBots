@@ -16,15 +16,24 @@ find_package(turtlebot3_navigation2 REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(gazebo_ros REQUIRED)
+find_package(gazebo_ros_pkgs REQUIRED)
 
-include_directories(include)
+link_directories(
+  ${GAZEBO_LIBRARY_DIRS}
+)
+
+include_directories(
+  include
+  ${GAZEBO_INCLUDE_DIRS}
+)
 
 
 # Add a single executable
-add_executable(robo_s2 src/main.cpp src/robo_s2.cpp)
+add_executable(robo_main src/main.cpp src/robo_s2.cpp src/robo_s3.cpp)
 
 ament_target_dependencies(
-  robo_s2 
+  robo_main 
   rclcpp 
   rclcpp_action 
   std_msgs 
@@ -35,18 +44,18 @@ ament_target_dependencies(
   OpenCV
 )
 
-target_include_directories(robo_s2 PUBLIC
+target_include_directories(robo_main PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
 
 # Link OpenCV libraries to your executable
-target_link_libraries(robo_s2 ${OpenCV_LIBRARIES})
+target_link_libraries(robo_main ${OpenCV_LIBRARIES})
 
-target_compile_features(robo_s2 PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(robo_main PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 install(TARGETS
-  robo_s2
+  robo_main
   DESTINATION lib/${PROJECT_NAME})
 
 # Ensure the headers are installed
@@ -58,6 +67,10 @@ install(DIRECTORY include/
 install(DIRECTORY maps/
   DESTINATION share/${PROJECT_NAME}/maps
   FILES_MATCHING PATTERN "*.yaml"
+)
+
+install(DIRECTORY launch models config urdf worlds
+  DESTINATION share/${PROJECT_NAME}/
 )
 
 
@@ -97,4 +110,12 @@ install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME})
 
+ament_export_include_directories(include)
+ament_export_dependencies(gazebo_ros_pkgs)
+ament_export_dependencies(geometry_msgs)
+ament_export_dependencies(nav_msgs)
+ament_export_dependencies(rclcpp)
+ament_export_dependencies(sensor_msgs)
+ament_export_dependencies(tf2)
+ament_export_dependencies(tf2_geometry_msgs)
 ament_package()

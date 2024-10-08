@@ -1,0 +1,6 @@
+image: map_binary.pgm  # Use relative path here
+resolution: 0.01
+origin: [-7.0, -10.5, 0.0]
+negate: 0
+occupied_thresh: 0.95
+free_thresh: 0.90

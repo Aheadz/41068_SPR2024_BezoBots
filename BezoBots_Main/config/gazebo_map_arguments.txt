@@ -1,0 +1,14 @@
+
+With X facing up and y facing Left the corners are:
+Lower Right : (-7,-10.5,0.01)
+Upper Right: (7,-10.5,0.1)
+Lower Left : (-7,10.5,0.1)
+Upper Left : (7,10.5,0.1)
+
+Resolution: 0.1
+
+This Command is to be run in the workspace root directory:
+
+ros2 run gazebo_map_creator request_map.py -c '(-7,-10.5,0.01)(7,10.5,0.15)' -r 0.01 -f $PWD/src/41068_SPR2024_BezoBots/BezoBots_Main/maps/gazebo_map
+
+ros2 run gazebo_map_creator request_map.py -c '(-7.0,-10.5,0.1)(7.0,10.5,0.15)' -r 0.01 -f $PWD/src/41068_SPR2024_BezoBots/BezoBots_Main/maps/gazebo_map/map
