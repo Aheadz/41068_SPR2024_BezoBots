@@ -177,9 +177,9 @@ Visualization Manager:
           Value: true
         caster_back_right_link:
           Value: true
-        gazebomap:
-          Value: true
         imu_link:
+          Value: true
+        map:
           Value: true
         odom:
           Value: true
@@ -193,27 +193,26 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        gazebomap:
-          {}
-        odom:
-          base_footprint:
-            base_link:
-              base_scan:
-                {}
-              camera_link:
-                camera_rgb_frame:
-                  camera_rgb_optical_frame:
-                    {}
-              caster_back_left_link:
-                {}
-              caster_back_right_link:
-                {}
-              imu_link:
-                {}
-              wheel_left_link:
-                {}
-              wheel_right_link:
-                {}
+        map:
+          odom:
+            base_footprint:
+              base_link:
+                base_scan:
+                  {}
+                camera_link:
+                  camera_rgb_frame:
+                    camera_rgb_optical_frame:
+                      {}
+                caster_back_left_link:
+                  {}
+                caster_back_right_link:
+                  {}
+                imu_link:
+                  {}
+                wheel_left_link:
+                  {}
+                wheel_right_link:
+                  {}
       Update Interval: 0
       Value: true
     - Angle Tolerance: 0.10000000149011612
@@ -257,7 +256,7 @@ Visualization Manager:
       Value: true
     - Alpha: 0.699999988079071
       Class: rviz_default_plugins/Map
-      Color Scheme: map
+      Color Scheme: costmap
       Draw Behind: false
       Enabled: true
       Name: Map
@@ -274,6 +273,27 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /gazebomap_updates
+      Use Timestamp: false
+      Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map_updates
       Use Timestamp: false
       Value: true
   Enabled: true
@@ -310,25 +330,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 21.668853759765625
+      Distance: 10.524030685424805
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -1.6872237920761108
-        Y: -2.896409749984741
-        Z: -2.4759957790374756
+        X: -1.3817651271820068
+        Y: -0.24377107620239258
+        Z: -1.1678770780563354
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0047968626022339
+      Pitch: 0.8397968411445618
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.665426254272461
+      Yaw: 3.735427141189575
     Saved: ~
 Window Geometry:
   Displays:

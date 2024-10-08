@@ -107,6 +107,13 @@ def generate_launch_description():
         description='Specify the launch file that starts cartographer'
     )
     
+    # Include the Cartographer launch file
+    cartographer_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            package_share_dir, 'launch/'),
+            LaunchConfiguration('cartographer_launch_file')])
+    )
+    
     rviz_launch = Node(
         package='rviz2',
         executable='rviz2',
@@ -124,5 +131,6 @@ def generate_launch_description():
         rviz_launch,  # Launch RViz first
         map_server_cmd,  # Delayed map server launch
         lifecycle_manager_cmd,  # Delayed lifecycle manager launch
-        cartographer_launch_arg,  # Pass the cartographer launch argument
+        cartographer_launch_arg,
+        cartographer_launch,  # Pass the cartographer launch argument
     ])
