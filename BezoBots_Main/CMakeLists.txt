@@ -19,7 +19,6 @@ find_package(tf2_ros REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(gazebo_ros REQUIRED)
 find_package(gazebo_ros_pkgs REQUIRED)
-find_package(OpenCV REQUIRED)
 
 link_directories(
   ${GAZEBO_LIBRARY_DIRS}
@@ -43,6 +42,7 @@ ament_target_dependencies(
   nav_msgs 
   tf2
   tf2_geometry_msgs
+  tf2_ros
   OpenCV
 )
 

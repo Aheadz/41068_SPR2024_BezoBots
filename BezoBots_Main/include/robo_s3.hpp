@@ -14,7 +14,9 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/buffer.h>
 #include <opencv2/opencv.hpp>
+#include "tf2/impl/utils.h"
 #include <cmath>
+#include <vector>
 
 class Sprint3 : public rclcpp::Node
 {
@@ -36,7 +38,7 @@ private:
     void mapCallback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
     cv::Mat occupancyGridToImage(const nav_msgs::msg::OccupancyGrid::SharedPtr &grid);
     void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
-    void check_newPoints(std :; vector<std::pair<double, double>> circle_points);
+    void checknewPoints(std::vector<std::pair<double, double>> circle_points);
     std::vector<std::pair<double, double>> detectCircleClusters(std::vector<std::pair<double, double>> points);
     void detectArc(const std::vector<std::pair<double, double>> &cluster, std::vector<std::pair<double, double>> &circle_centers);
     bool calculateCircleFromThreePoints(const std::pair<double, double> &p1,
@@ -48,6 +50,7 @@ private:
     void drawOnMap(double x, double y);
     void convertToMapFrame(std::vector<std::pair<double, double>> &points);
 
+    //Member variables
     rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_subscriber_;
     rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_subscriber_;
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_subscriber_;
