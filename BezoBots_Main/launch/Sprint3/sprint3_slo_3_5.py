@@ -1,14 +1,20 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction, TimerAction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
+# Get the path to the 'bezobots' package's share directory
+package_share_dir = get_package_share_directory('bezobots')
+
+TURTLEBOT3_MODEL = os.environ.get('TURTLEBOT3_MODEL', 'waffle')
+
+# Function to evaluate joystick usage
 def evaluate_joystick(context, *args, **kwargs):
     joystick_value = LaunchConfiguration('joystick').perform(context)
-    
+
     if joystick_value == 'True':
         # Launch the joystick teleop node for manual control
         teleop_node = Node(
@@ -23,56 +29,97 @@ def evaluate_joystick(context, *args, **kwargs):
             name='joy_node',
             output='screen',
             parameters=[{
-                'deadzone': 0.1,  # Deadzone for joystick, adjust as needed
+                'deadzone': 0.1,  # Adjust deadzone for joystick
             }]
         )
         return [teleop_node, joy_node]
     else:
         return []
 
-def generate_launch_description():   
-    # Declare arguments
+# Generate the unified launch description
+def generate_launch_description():
+    # Define launch arguments
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    
     joystick_launch_arg = DeclareLaunchArgument(
         'joystick',
         default_value='False',
         description='Specify whether or not Joystick will be used for teleop'
     )
-
-    # Get the path to your package's share directory
-    package_share_dir = get_package_share_directory('bezobots')  # Replace with your package name
-    
-    # Declare the launch argument for selecting the turtlebot3_gazebo launch file
     turtlebot_launch_arg = DeclareLaunchArgument(
-        'turtlebot_launch_file', 
-        default_value='aws_world.launch.py',  # Default to this launch file
+        'turtlebot_launch_file',
+        default_value='aws_world.launch.py',
         description='Specify the TurtleBot3 Gazebo launch file to use'
     )
+    
+    
+    workspace_dir = os.getenv('COLCON_PREFIX_PATH', os.getcwd()).replace('/install','')
+    map_file_path = os.path.join(workspace_dir, 'src', '41068_SPR2024_BezoBots', 'BezoBots_Main', 'maps', 'cartographer_map', 'gazebo_cartographer.yaml')
+    
+    map_dir = LaunchConfiguration(
+        'map',
+        default=map_file_path
+    )
+    
+    param_dir = LaunchConfiguration(
+        'params_file',
+        default=os.path.join(package_share_dir, 'config', 'nav2_params.yaml')
+    )
 
-    # Launch the turtlebot3_gazebo with the selected launch file
+    # Define paths for other files
+    nav2_launch_file_dir = os.path.join(get_package_share_directory('nav2_bringup'), 'launch')
+    
+    rviz_nav2_config_dir = os.path.join(package_share_dir, 'config', 'nav2_default_view.rviz')
+
+    # Include the TurtleBot3 Gazebo launch file
     turtlebot3_gazebo_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(
-            package_share_dir, 'launch/'),
-            LaunchConfiguration('turtlebot_launch_file')])
+        PythonLaunchDescriptionSource([
+            os.path.join(package_share_dir, 'launch/'),
+            LaunchConfiguration('turtlebot_launch_file')
+        ])
     )
-    
-    rviz_config_dir = os.path.join(
-        package_share_dir,
-        'config',
-        'rviz_config_SLO_3_5.rviz'
+
+    # Include the navigation2 launch file
+    nav2_bringup_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([nav2_launch_file_dir, '/bringup_launch.py']),
+        launch_arguments={
+            'map': map_dir,
+            'use_sim_time': use_sim_time,
+            'params_file': param_dir
+        }.items(),
     )
-    
-    rviz_launch = Node(
+
+    # RViz node for nav2 package
+    rviz_nav2_launch = Node(
         package='rviz2',
         executable='rviz2',
         name='rviz2',
-        arguments=['-d', rviz_config_dir],
+        arguments=['-d', rviz_nav2_config_dir],
+        parameters=[{'use_sim_time': use_sim_time}],
         output='screen'
     )
-    
+
+    # Return the full launch description
     return LaunchDescription([
-        turtlebot_launch_arg,  # Include the argument for selecting the TurtleBot3 Gazebo launch file
-        joystick_launch_arg,  # Joystick argument
+        joystick_launch_arg,
+        turtlebot_launch_arg,
+        DeclareLaunchArgument(
+            'map',
+            default_value=map_dir,
+            description='Full path to map file to load'
+        ),
+        DeclareLaunchArgument(
+            'params_file',
+            default_value=param_dir,
+            description='Full path to param file to load'
+        ),
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value='false',
+            description='Use simulation (Gazebo) clock if true'
+        ),
         turtlebot3_gazebo_launch,
-        OpaqueFunction(function=evaluate_joystick),  # Evaluate joystick configuration
-        rviz_launch,  # Launch RViz first
+        nav2_bringup_launch,
+        OpaqueFunction(function=evaluate_joystick),
+        rviz_nav2_launch,
     ])
