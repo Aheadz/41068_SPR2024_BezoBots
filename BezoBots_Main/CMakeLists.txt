@@ -15,9 +15,11 @@ find_package(nav_msgs REQUIRED)
 find_package(turtlebot3_navigation2 REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(gazebo_ros REQUIRED)
 find_package(gazebo_ros_pkgs REQUIRED)
+find_package(OpenCV REQUIRED)
 
 link_directories(
   ${GAZEBO_LIBRARY_DIRS}
