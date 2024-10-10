@@ -1,22 +1,33 @@
 /*!
-
-*/
-
-// without this gap between two doxygen definition, the last group does not get
-// populated properly for some reason.
-
-/*!
 @mainpage 41068 Robotics Studio 1 Spring 2024 BezoBots - Warehouse Automation Project
 
 @section intro Introduction
-
+This project focuses on developing an autonomous logistics robot designed to optimize warehouse operations. 
+The robot navigates a factory environment autonomously using SLAM to map its surroundings, with a primary goal of 
+enhancing efficiency and minimizing manual labor. Key tasks include object detection, path planning, and managing 
+obstacles using sensor data, such as laser scans and odometry.
 
 @section system_overview System Overview
+The autonomous robot is based on the TurtleBot3 platform and performs supply chain-related tasks like moving shelves 
+and conducting stock-taking tasks. The system integrates ROS2 with various sensors including LiDAR and IMU, while using 
+simulators like Gazebo to mimic warehouse environments. The project involves:
+- SLAM for mapping and localization.
+- Object detection, focusing on cylindrical objects.
+- Path planning using A* algorithm for efficient navigation.
+
+The robot uses real-time data from sensors for decision-making, avoiding obstacles and updating its path dynamically.
 
 @section running Running the Program
-The program can be launched using the following ROS2 command: 
+The program can be launched using the following ROS2 command:
+\verbatim
+# ros2 launch bezobots sprint3_slo_3_x.py
+\endverbatim
+This will initialize the robot in a Gazebo warehouse environment, using RViz for visualization and Cartographer for SLAM.
 
 @section images Simulation Images
+Here are some snapshots of the robot navigating the simulated warehouse environment using SLAM and detecting objects:
+- SLAM Map Visualization
+- Detected Cylindrical Objects
 
 @section build Building the Documentation
 To generate this documentation:
@@ -26,14 +37,16 @@ To generate this documentation:
 4. Run `doxygen Doxyfile` to generate the HTML and LaTeX output.
 
 @section topics ROS Topics
-
-The ROS package with nodes subscribes to the following topics:
+The ROS package subscribes to the following topics:
+- `/scan`: Laser scan data.
+- `/odom`: Odometry data.
+- `/map`: Occupancy grid map data.
 
 It publishes to the following topics:
-
+- `/cmd_vel`: Command velocities for the robot's movement.
 
 The package responds to the following service requests:
-
+- Emergency stop service for safe operation.
 
 @n By BezoBots Team
 @n mostafa.e.rahimi@student.uts.edu.au zahead.rashidi@student.uts.edu.au
