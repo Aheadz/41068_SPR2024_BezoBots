@@ -54,7 +54,7 @@ def generate_launch_description():
     
     
     workspace_dir = os.getenv('COLCON_PREFIX_PATH', os.getcwd()).replace('/install','')
-    map_file_path = os.path.join(workspace_dir, 'src', '41068_SPR2024_BezoBots', 'BezoBots_Main', 'maps', 'cartographer_map', 'gazebo_cartographer.yaml')
+    map_file_path = '/home/student/BezoBots_ws/src/41068_SPR2024_BezoBots/BezoBots_Main/maps/gazebo_map/map.yaml'
     
     map_dir = LaunchConfiguration(
         'map',
