@@ -3,7 +3,8 @@
 NavigateRobot::NavigateRobot() : Node("navigate_robot"), initial_pose_set_(false), goal_index_(0),
                                  robot_start_x_(0.0), robot_start_y_(0.0), shelf_x(0.0), shelf_y(0.0),
                                  total_distance_(0.0),
-                                 map_width_(500), map_height_(500), scale_(50.0)
+                                 map_width_(500),
+                                 map_height_(500), scale_(50.0)
 {
     // Initialize the action client for the Nav2 goal
     action_client_ = rclcpp_action::create_client<NavigateToPose>(this, "navigate_to_pose");
@@ -33,7 +34,8 @@ NavigateRobot::NavigateRobot() : Node("navigate_robot"), initial_pose_set_(false
 
     // Initialize the OpenCV image for path visualization
     map_image_ = cv::Mat::zeros(map_height_, map_width_, CV_8UC3); // Create a black image
-    cv::namedWindow("Robot Path Visualization", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow("Robot Path Visualization", cv::WINDOW_NORMAL);
+    cv::resizeWindow("Robot Path Visualization", 350, 350);
 
     // Print message to notify waiting for 2D Pose Estimate
     RCLCPP_INFO(this->get_logger(), "Waiting for 2D Pose Estimate to be set...");
@@ -99,71 +101,94 @@ void NavigateRobot::mapCallback(const nav_msgs::msg::OccupancyGrid::SharedPtr ms
     cv::waitKey(1);
 }
 
-// Odometry callback with map and path overlay
 void NavigateRobot::odometryCallback(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
     robot_current_x_ = msg->pose.pose.position.x;
     robot_current_y_ = msg->pose.pose.position.y;
-
-    // Convert robot coordinates to pixel space
+    robot_current_z_ = msg->pose.pose.position.z; // Track robot's height if needed
+    //RCLCPP_INFO(this->get_logger(), "Odometry callback ...");
+    // Convert robot coordinates to pixel space for visualization
     int robot_x_pixel = static_cast<int>(robot_current_x_ * scale_) + map_width_ / 2;
     int robot_y_pixel = static_cast<int>(robot_current_y_ * scale_) + map_height_ / 2;
 
     // Draw the robot's current position as a green dot
-    cv::circle(map_image_, cv::Point(robot_x_pixel, robot_y_pixel), 2, cv::Scalar(0, 255, 0), -1);
-
-    // If the robot is moving toward the second goal, move the shelf accordingly
-    // If the robot is moving toward the second goal, start moving the shelf accordingly
-    // If the robot is moving toward the second goal, move the shelf accordingly
-    if (goal_index_ == 1)
-    {
+    cv::circle(map_image_, cv::Point(robot_x_pixel, robot_y_pixel), 1, cv::Scalar(0, 255, 0), -1);
+    RCLCPP_INFO(this->get_logger(), "Current goal (outside loop) %d ", goal_index_);
+    // If the robot is moving toward the first four goals, move the shelf accordingly
+    if (goal_index_ >= 1 && goal_index_ <= 3)
+    {   
+        RCLCPP_INFO(this->get_logger(), "Current goal (inside loop) %d ", goal_index_);
+        // Start the shelf movement asynchronously if not already running
         if (!keep_moving_shelf_)
-        {                              // Start the shelf movement thread if not already running
-            keep_moving_shelf_ = true; // Set the flag to true
+        {   
+            RCLCPP_INFO(this->get_logger(), "Pass keep moving condition");
+            keep_moving_shelf_ = true;
 
-            // Launch a thread that will call moveShelf every 1 second
-            shelf_movement_thread_ = std::thread([this]()
-                                                 {
-                const double target_shelf_x = 3.021488;  // Target X position for the shelf
-                const double target_shelf_y = -4.101736;  // Target Y position for the shelf
+            // Launch a future to handle the shelf movement asynchronously
+            shelf_movement_future_ = std::async(std::launch::async, [this]()
+                                                {
+                while (keep_moving_shelf_)
+                {
+                    double target_shelf_x = 0.0, target_shelf_y = 0.0;
 
-                while (keep_moving_shelf_) {
-                    // Compute the updated shelf position based on robot's current position
-                    double shelf_x = robot_current_x_ + 0.05;
-                    double shelf_y = robot_current_y_ + 0.05;
-
-                    // Call the moveShelf function
-                    moveShelf("Robo_Shelves_11", shelf_x, shelf_y, 0.0343);
-
-                    // Check if the shelf is within the tolerance of its target position
-                    if (std::abs(shelf_x - target_shelf_x) <= tolerance && std::abs(shelf_y - target_shelf_y) <= tolerance) {
-                        RCLCPP_INFO(this->get_logger(), "Shelf reached target location. Stopping movement.");
-                        keep_moving_shelf_ = false;  // Stop moving the shelf
-                        break;  // Exit the loop
+                    // Set target positions for the shelf based on the current goal
+                    if (goal_index_ == 1) {
+                        target_shelf_x = pose1.position.x;
+                        target_shelf_y = pose1.position.y;
+                    } else if (goal_index_ == 2) {
+                        target_shelf_x = pose2.position.x;
+                        target_shelf_y = pose2.position.y;
+                    } else if (goal_index_ == 3) {
+                        target_shelf_x = pose3.position.x;
+                        target_shelf_y = pose3.position.y;
+                    } else if (goal_index_ == 4) {
+                        target_shelf_x = pose4.position.x;
+                        target_shelf_y = pose4.position.y;
                     }
 
-                    // Sleep for 1 second before moving the shelf again
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    // Compute the updated shelf position based on the robot's current position
+                    shelf_x = robot_current_x_ + 0.05;
+                    shelf_y = robot_current_y_ + 0.05;
+                    shelf_z = robot_current_z_ + 1.0;
+
+                    // Move the shelf to the updated position
+                    moveShelf("Robo_Shelves_11", shelf_x, shelf_y, shelf_z);
+
+                    // Check if the shelf is within the tolerance of its current target position
+                    if (std::abs(shelf_x - target_shelf_x) <= tolerance && std::abs(shelf_y - target_shelf_y) <= tolerance) {
+                        RCLCPP_INFO(this->get_logger(), "Shelf reached goal %d location. Stopping movement for this goal.", goal_index_);
+
+                        // Final goal (goal 4) reached, stop moving the shelf and lower it
+                        if (goal_index_ == 4) {
+                            moveShelf("Robo_Shelves_11", shelf_x, shelf_y, 0.043);  // Final z-coordinate
+                            RCLCPP_INFO(this->get_logger(), "Shelf reached final goal location. Stopping movement.");
+                            keep_moving_shelf_ = false;  // Stop the shelf movement
+
+                            // Wait for the future to ensure the shelf movement is stopped
+                            if (shelf_movement_future_.valid()) {
+                                shelf_movement_future_.wait();
+                            }
+
+                            break;  // Exit the shelf movement loop
+                        }
+                    }
+
+                    // Sleep for 500 ms before moving the shelf again
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500));
                 } });
         }
     }
-    else
+    if (goal_index_ > 3) // After goal 4, ensure the shelf doesn't move anymore
     {
-        // If the goal is not 1, stop moving the shelf
         if (keep_moving_shelf_)
         {
-            keep_moving_shelf_ = false; // Stop the shelf movement
-            if (shelf_movement_thread_.joinable())
-            {
-                shelf_movement_thread_.join(); // Join the thread when stopping
-            }
+            RCLCPP_INFO(this->get_logger(), "Stopping shelf movement after goal 4.");
+            keep_moving_shelf_ = false; // Stop the shelf movement flag
         }
     }
-
     // Show the updated map with the path
     cv::imshow("Robot Path Visualization", map_image_);
     cv::waitKey(1);
-    RCLCPP_INFO(this->get_logger(), "Odometry update received during goal %d", goal_index_);
 }
 
 void NavigateRobot::pathCallback(const nav_msgs::msg::Path::SharedPtr msg)
@@ -181,7 +206,7 @@ void NavigateRobot::drawPlannedPath(const nav_msgs::msg::Path::SharedPtr path)
         int path_y_pixel = static_cast<int>(pose.pose.position.y * scale_) + map_height_ / 2;
 
         // Draw planned path as red dots
-        cv::circle(map_image_, cv::Point(path_x_pixel, path_y_pixel), 3, cv::Scalar(0, 0, 255), -1);
+        cv::circle(map_image_, cv::Point(path_x_pixel, path_y_pixel), 2, cv::Scalar(0, 0, 255), -1);
     }
 
     // Display the updated image
@@ -191,29 +216,48 @@ void NavigateRobot::drawPlannedPath(const nav_msgs::msg::Path::SharedPtr path)
 
 void NavigateRobot::sendGoal(int goal_index)
 {
-    // Define the two hardcoded goals
+    // Initialize the poses
+    // Shelf 14
+    pose1.position.x = -0.044;
+    pose1.position.y = 1.31;
+    pose1.position.z = 0.0; // First goal
+    pose2.position.x = 2.0;
+    pose2.position.y = -1.0;
+    pose2.position.z = 0.0; // Second goal
+    pose3.position.x = 2.0;
+    pose3.position.y = -4.5;
+    pose3.position.z = 0.0; // Third goal
+    pose4.position.x = 3.5;
+    pose4.position.y = -4.5;
+    pose4.position.z = 0.0; // Final goal
+
+    // Shelf 4
+    pose5.position.x = -0.055;
+    pose5.position.y = -3.097487;
+    pose5.position.z = 0.0; //
+    pose6.position.x = -0.044;
+    pose6.position.y = 1.31;
+    pose6.position.z = 0.0; //
+
+    // Now, you can define the vector of tuples using the pose information
     std::vector<std::tuple<double, double, double>> goals = {
-        {-0.044, 1.31, 0.0},       // First goal: Center under the shelf
-        {3.021488, -4.101736, 0.0} // Second goal: Drop-off location
-    };
+        {pose1.position.x, pose1.position.y, pose1.position.z}, // First goal
+        {pose2.position.x, pose2.position.y, pose2.position.z}, // Second goal
+        {pose3.position.x, pose3.position.y, pose3.position.z}, // Third goal
+        {pose4.position.x, pose4.position.y, pose4.position.z}, // Final goal
+        {pose5.position.x, pose5.position.y, pose5.position.z},
+        {pose6.position.x, pose6.position.y, pose6.position.z}};
 
     // Check if we've exceeded the number of goals
-    if (goal_index >= goals.size())
+    if (goal_index_ >= goals.size())
     {
         RCLCPP_INFO(this->get_logger(), "All goals reached.");
         return;
     }
 
     // Get the current goal coordinates
-    auto [goal_x, goal_y, yaw] = goals[goal_index];
-    RCLCPP_INFO(this->get_logger(), "Sending goal %d: (x = %f, y = %f, yaw = %f)", goal_index + 1, goal_x, goal_y, yaw);
-
-    // Calculate total distance for the second goal
-    if (goal_index == 1)
-    {
-        total_distance_ = calculateTotalDistanceToGoal(goal_x, goal_y);
-        RCLCPP_INFO(this->get_logger(), "Total distance to goal 2: %f meters", total_distance_);
-    }
+    auto [goal_x, goal_y, yaw] = goals[goal_index_];
+    // RCLCPP_INFO(this->get_logger(), "Sending goal %d: (x = %f, y = %f, yaw = %f)", goal_index_ + 1, goal_x, goal_y, yaw);
 
     // Construct the goal message
     auto goal_msg = NavigateToPose::Goal();
@@ -230,26 +274,32 @@ void NavigateRobot::sendGoal(int goal_index)
     send_goal_options.feedback_callback = [this](std::shared_ptr<GoalHandleNavigateToPose> goal_handle,
                                                  const std::shared_ptr<const NavigateToPose::Feedback> feedback)
     {
-        // RCLCPP_INFO(this->get_logger(), "Feedback received: Distance remaining to goal = %f", feedback->distance_remaining);
+        //RCLCPP_INFO(this->get_logger(), "Distance to goal %d = %f", goal_index_ + 1, feedback->distance_remaining);
     };
 
     // Result callback when the goal is completed
-    send_goal_options.result_callback = [this, goal_index](const auto &result)
+    send_goal_options.result_callback = [this](const auto &result)
     {
         if (result.code == rclcpp_action::ResultCode::SUCCEEDED)
         {
-            RCLCPP_INFO(this->get_logger(), "Goal %d reached successfully!", goal_index + 1);
+            //RCLCPP_INFO(this->get_logger(), "Goal %d reached successfully!", goal_index_ + 1);
 
-            // Send the next goal only when the current goal is finished
-            if (goal_index == 0)
+            // Increment to the next goal
+            goal_index_ += 1;
+
+            // Check if there are more goals to send
+            if (goal_index_ < 6)
             {
-                sendGoal(1);      // Send the second goal after the first is completed
-                goal_index_ += 1; // Increment to goal_index_
+                sendGoal(goal_index_); // Send the next goal if available
+            }
+            else
+            {
+                //RCLCPP_INFO(this->get_logger(), "All goals have been successfully reached.");
             }
         }
         else
         {
-            RCLCPP_ERROR(this->get_logger(), "Failed to reach goal %d.", goal_index + 1);
+            //RCLCPP_ERROR(this->get_logger(), "Failed to reach goal %d.", goal_index_ + 1);
         }
     };
 
@@ -274,7 +324,7 @@ void NavigateRobot::moveShelf(const std::string &shelf_name, double x, double y,
     request->state.pose.position.z = z;
     request->state.pose.orientation.w = 1.0; // No rotation
     request->state.reference_frame = "world";
-
+    
     // Check if the service is available before calling
     if (!shelf_service_client_->wait_for_service(std::chrono::seconds(5)))
     {

@@ -6,12 +6,16 @@
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
+#include "geometry_msgs/msg/pose.hpp"
 #include "nav_msgs/msg/odometry.hpp"            // Include Odometry message
 #include "gazebo_msgs/srv/set_entity_state.hpp" // Include the SetEntityState service
 #include "nav_msgs/msg/occupancy_grid.hpp"      // Include OccupancyGrid for map data
 #include <opencv2/opencv.hpp>                   // Include OpenCV
 #include <cmath>
 #include <thread>
+#include <mutex>
+#include <future>
+
 class NavigateRobot : public rclcpp::Node
 {
 public:
@@ -34,17 +38,21 @@ private:
     bool initial_pose_set_;
     int goal_index_;
     // Robot position
-    double robot_start_x_;
-    double robot_start_y_;
-    double robot_current_x_;
-    double robot_current_y_;
+    double robot_start_x_, robot_start_y_, robot_start_z;
+    double robot_current_x_, robot_current_y_, robot_current_z_;
     // Shelf Position
-    double shelf_x;
-    double shelf_y;
+    double shelf_x, shelf_y, shelf_z;
+    // Goals for Shelf 14
+    //  Declare poses using geometry_msgs::msg::Pose
+    geometry_msgs::msg::Pose pose1, pose2, pose3, pose4;
+    //Goals for Shelf 4
+    geometry_msgs::msg::Pose pose5, pose6, pose7, pose8;
     // Declare a separate thread variable as part of the class, to handle the shelf movement
     std::thread shelf_movement_thread_;
+    std::mutex shelf_movement_mutex_; // Mutex to protect shared variables
+    std::future<void> shelf_movement_future_;
     bool keep_moving_shelf_ = false; // A flag to control the shelf movement thread
-    const double tolerance = 0.3; //Tolerance to place the shelf 
+    const double tolerance = 0.3;    // Tolerance to place the shelf
     // Total distance
     double total_distance_;
 
