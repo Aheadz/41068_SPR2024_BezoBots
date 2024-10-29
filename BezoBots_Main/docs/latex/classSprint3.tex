@@ -1,0 +1,51 @@
+\hypertarget{classSprint3}{}\doxysection{Sprint3 Class Reference}
+\label{classSprint3}\index{Sprint3@{Sprint3}}
+
+
+A ROS2 node for processing laser scan, odometry, and occupancy grid data to detect and map cylindrical objects.  
+
+
+
+
+{\ttfamily \#include $<$robo\+\_\+s3.\+hpp$>$}
+
+
+
+Inheritance diagram for Sprint3\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=157pt]{classSprint3__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Sprint3\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=157pt]{classSprint3__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classSprint3_af4534e6ac9e5c102163339378e4d9cd7}\label{classSprint3_af4534e6ac9e5c102163339378e4d9cd7}} 
+\mbox{\hyperlink{classSprint3_af4534e6ac9e5c102163339378e4d9cd7}{Sprint3}} ()
+\begin{DoxyCompactList}\small\item\em Construct a new Sprint 3 object. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classSprint3_ab4a1d0e42ae6071d64be380a321b25d8}\label{classSprint3_ab4a1d0e42ae6071d64be380a321b25d8}} 
+\mbox{\hyperlink{classSprint3_ab4a1d0e42ae6071d64be380a321b25d8}{$\sim$\+Sprint3}} ()
+\begin{DoxyCompactList}\small\item\em Destroy the Sprint 3 object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A ROS2 node for processing laser scan, odometry, and occupancy grid data to detect and map cylindrical objects. 
+
+This node subscribes to the laser scan, occupancy grid, and odometry topics to detect cylinder-\/like objects (circles) which are 30cm in diameter in the project\textquotesingle{}s environment. Detected circles are then transformed into the map frame and visualized on the occupancy grid (with the position). 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/robo\+\_\+s3.\+hpp\item 
+src/robo\+\_\+s3.\+cpp\end{DoxyCompactItemize}

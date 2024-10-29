@@ -1,0 +1,49 @@
+\hypertarget{index_intro}{}\doxysection{Introduction}\label{index_intro}
+This project focuses on developing an autonomous logistics robot designed to optimize warehouse operations. The robot navigates a factory environment autonomously using SLAM to map its surroundings, with a primary goal of enhancing efficiency and minimizing manual labor. Key tasks include object detection, path planning, and managing obstacles using sensor data, such as laser scans and odometry.\hypertarget{index_system_overview}{}\doxysection{System Overview}\label{index_system_overview}
+The autonomous robot is based on the Turtle\+Bot3 platform and performs supply chain-\/related tasks like moving shelves and conducting stock-\/taking tasks. The system integrates ROS2 with various sensors including Li\+DAR and IMU, while using simulators like Gazebo to mimic warehouse environments. The project involves\+:
+\begin{DoxyItemize}
+\item SLAM for mapping and localization.
+\item Object detection, focusing on cylindrical objects.
+\item Path planning using A$\ast$ algorithm for efficient navigation.
+\end{DoxyItemize}
+
+The robot uses real-\/time data from sensors for decision-\/making, avoiding obstacles and updating its path dynamically.\hypertarget{index_running}{}\doxysection{Running the Program}\label{index_running}
+The program can be launched using the following ROS2 command\+: \begin{DoxyVerb}# ros2 launch bezobots sprint3_slo_3_x.py
+\end{DoxyVerb}
+ This will initialize the robot in a Gazebo warehouse environment, using RViz for visualization and Cartographer for SLAM.\hypertarget{index_images}{}\doxysection{Simulation Images}\label{index_images}
+Here are some snapshots of the robot navigating the simulated warehouse environment using SLAM and detecting objects\+:
+\begin{DoxyItemize}
+\item SLAM Map Visualization
+\item Detected Cylindrical Objects
+\end{DoxyItemize}\hypertarget{index_build}{}\doxysection{Building the Documentation}\label{index_build}
+To generate this documentation\+:
+\begin{DoxyEnumerate}
+\item Navigate to your project directory.
+\item Run {\ttfamily doxygen –g} to create a Doxyfile.
+\item Adjust your Doxyfile as needed (specifically INPUT and OUTPUT directories).
+\item Run {\ttfamily doxygen Doxyfile} to generate the HTML and La\+TeX output.
+\end{DoxyEnumerate}\hypertarget{index_topics}{}\doxysection{ROS Topics}\label{index_topics}
+The ROS package subscribes to the following topics\+:
+\begin{DoxyItemize}
+\item {\ttfamily /scan}\+: Laser scan data.
+\item {\ttfamily /odom}\+: Odometry data.
+\item {\ttfamily /map}\+: Occupancy grid map data.
+\end{DoxyItemize}
+
+It publishes to the following topics\+:
+\begin{DoxyItemize}
+\item {\ttfamily /cmd\+\_\+vel}\+: Command velocities for the robot\textquotesingle{}s movement.
+\end{DoxyItemize}
+
+The package responds to the following service requests\+:
+\begin{DoxyItemize}
+\item Emergency stop service for safe operation.
+\end{DoxyItemize}
+
+~\newline
+ By Bezo\+Bots Team ~\newline
+ \href{mailto:mostafa.e.rahimi@student.uts.edu.au}{\texttt{ mostafa.\+e.\+rahimi@student.\+uts.\+edu.\+au}} \href{mailto:zahead.rashidi@student.uts.edu.au}{\texttt{ zahead.\+rashidi@student.\+uts.\+edu.\+au}}
+
+\begin{DoxyDate}{Date}
+10-\/October-\/2024 
+\end{DoxyDate}
