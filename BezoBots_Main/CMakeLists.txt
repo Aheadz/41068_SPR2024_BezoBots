@@ -12,6 +12,7 @@ find_package(rclcpp_action REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(nav2_msgs REQUIRED)
 find_package(turtlebot3_navigation2 REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
@@ -19,6 +20,7 @@ find_package(tf2_ros REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(gazebo_ros REQUIRED)
 find_package(gazebo_ros_pkgs REQUIRED)
+find_package(gazebo_msgs REQUIRED)
 
 link_directories(
   ${GAZEBO_LIBRARY_DIRS}
@@ -31,7 +33,7 @@ include_directories(
 
 
 # Add a single executable
-add_executable(robo_main src/main.cpp src/robo_s2.cpp src/robo_s3.cpp)
+add_executable(robo_main src/main.cpp src/robo_s2.cpp src/robo_s3.cpp src/robo_navigaterobot.cpp)
 
 ament_target_dependencies(
   robo_main 
@@ -39,10 +41,13 @@ ament_target_dependencies(
   rclcpp_action 
   std_msgs 
   sensor_msgs 
-  nav_msgs 
+  nav_msgs
+  nav2_msgs 
   tf2
   tf2_geometry_msgs
   tf2_ros
+  gazebo_ros_pkgs 
+  gazebo_msgs
   OpenCV
 )
 

@@ -1,0 +1,45 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/student/BezoBots_ws/install/bezobots/include/**",
+        "/home/student/BezoBots_ws/install/turtlebot3_fake_node/include/**",
+        "/home/student/BezoBots_ws/install/turtlebot3_msgs/include/**",
+        "/home/student/BezoBots_ws/install/turtlebot3_gazebo/include/**",
+        "/home/student/BezoBots_ws/install/robot_localization/include/**",
+        "/home/student/BezoBots_ws/install/dynamixel_sdk_custom_interfaces/include/**",
+        "/home/student/BezoBots_ws/install/dynamixel_sdk/include/**",
+        "/home/student/ros2_ws/install/turtlesim/include/**",
+        "/home/student/ros2_ws/install/turtlebot3_fake_node/include/**",
+        "/home/student/ros2_ws/install/turtlebot3_msgs/include/**",
+        "/home/student/ros2_ws/install/turtlebot3_gazebo/include/**",
+        "/home/student/ros2_ws/install/robot_localization/include/**",
+        "/home/student/ros2_ws/install/dynamixel_sdk_custom_interfaces/include/**",
+        "/home/student/ros2_ws/install/dynamixel_sdk/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/student/BezoBots_ws/src/41068_SPR2024_BezoBots/BezoBots_Main/include/**",
+        "/home/student/BezoBots_ws/src/DynamixelSDK/dynamixel_sdk/include/**",
+        "/home/student/BezoBots_ws/src/DynamixelSDK/dynamixel_sdk_examples/include/**",
+        "/home/student/BezoBots_ws/src/robot_localization/include/**",
+        "/home/student/BezoBots_ws/src/scan_matching_localiser/include/**",
+        "/home/student/BezoBots_ws/src/turtlebot3/turtlebot3_node/include/**",
+        "/home/student/BezoBots_ws/src/turtlebot3_simulations/turtlebot3_fake_node/include/**",
+        "/home/student/BezoBots_ws/src/turtlebot3_simulations/turtlebot3_gazebo/include/**",
+        "/home/student/BezoBots_ws/src/tut2_new/include/**",
+        "/home/student/BezoBots_ws/src/tut4_new/include/**",
+        "/home/student/BezoBots_ws/src/tut5/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
