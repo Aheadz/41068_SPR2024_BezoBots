@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'shelf_detector = shelf_detector.scripts.shelf_detector:main',
+            'shelf_selector = shelf_detector.scripts.shelf_selector:main',
         ],
     },
 )

@@ -7,6 +7,7 @@ def generate_launch_description():
     map_dir = '/home/student/ros2_ws/src/41068_SPR2024_BezoBots/BezoBots_Main/maps/gazebo_map'
     
     return LaunchDescription([
+        # Shelf detector node
         Node(
             package='shelf_detector',
             executable='shelf_detector',
@@ -14,6 +15,15 @@ def generate_launch_description():
             parameters=[{
                 'map_yaml_path': os.path.join(map_dir, 'map.yaml'),
                 'binary_map_path': os.path.join(map_dir, 'map_binary.pgm')
-            }]
+            }],
+            output='screen'  # Added for better debugging
+        ),
+        
+        # Shelf selector GUI node
+        Node(
+            package='shelf_detector',
+            executable='shelf_selector',
+            name='shelf_selector',
+            output='screen'  # Added for better debugging
         )
     ])
