@@ -1,5 +1,5 @@
 map_server:
   ros__parameters:
-    yaml_filename: "/home/strangelove/robo1_ws/src/41068_SPR2024_BezoBots/BezoBots_Main/maps/gazebo_map/map.yaml"
+    yaml_filename: "/home/student/BezoBots_ws/src/41068_SPR2024_BezoBots/BezoBots_Main/maps/gazebo_map/map.yaml"
     topic_name: "gazebomap"
     frame_id: "gazebomap"

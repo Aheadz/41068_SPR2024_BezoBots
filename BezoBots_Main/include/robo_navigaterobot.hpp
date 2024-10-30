@@ -52,12 +52,15 @@ private:
     std::mutex shelf_movement_mutex_; // Mutex to protect shared variables
     std::future<void> shelf_movement_future_;
     bool keep_moving_shelf_ = false; // A flag to control the shelf movement thread
+    bool keep_moving_shelf_2_ = false; 
+    bool keep_moving_shelf_3_ =false; 
     const double tolerance = 0.3;    // Tolerance to place the shelf
     // Total distance
     double total_distance_;
 
     // OpenCV related variables
     cv::Mat map_image_; // OpenCV image for real-time path visualization
+    cv::Mat flip_image_; //Flip image to show correct orientation of the image
     int map_width_;
     int map_height_;
     double scale_; // Scaling factor for converting coordinates to pixels
