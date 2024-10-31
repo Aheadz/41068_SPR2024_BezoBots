@@ -65,6 +65,9 @@ private:
     int map_height_;
     double scale_; // Scaling factor for converting coordinates to pixels
 
+    //Boolean to check if there's a human during robot's tasks
+    bool human_detected = false;
+
     void amclPoseCallback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
     void odometryCallback(const nav_msgs::msg::Odometry::SharedPtr msg); // Odometry callback
     void pathCallback(const nav_msgs::msg::Path::SharedPtr msg);         // Planned path callback
